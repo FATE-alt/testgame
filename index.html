@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FUSE // Bomberman Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar"><a class="brand" href="#"><span class="brand-mark"><i></i><i></i><i></i><i></i></span> FUSE</a><div class="server-status"><span id="statusDot" class="status-dot offline"></span><span id="connectionStatus">CONNECTING</span><span class="slash">//</span> ARENA 01</div><div class="room-code">ROOM <strong id="roomCode">----</strong></div></header>
+    <section class="hero-row"><div><p class="eyebrow">REAL-TIME DEMOLITION / 4 PLAYER</p><h1>Light the fuse.<br><em>Own the grid.</em></h1></div><p class="lede">A small arena, a short fuse, and nowhere to hide. The server referees every move, blast, and pickup.</p></section>
+    <section class="arena-layout">
+      <aside class="panel roster-panel"><div class="panel-heading"><span>PLAYERS</span><b id="playerCount">0/4</b></div><div id="playerList" class="player-list"></div><div class="panel-divider"></div><p class="eyebrow">MATCH FEED</p><div id="feed" class="feed"></div></aside>
+      <section class="board-column"><div class="board-meta"><span id="matchState">WAITING FOR PLAYERS</span><span id="timer">03:00</span></div><div class="board-frame"><canvas id="gameCanvas" width="672" height="672" aria-label="Bomberman arena"></canvas><div id="overlay" class="overlay"><span class="overlay-kicker">FUSE / ONLINE ARENA</span><h2>WAITING ROOM</h2><p>Share this tab with friends. The match begins when two players join.</p><button id="readyButton" class="primary-button">JOIN THE FIGHT <span>→</span></button></div></div><div class="controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> MOVE</span><span><kbd>ARROWS</kbd> MOVE</span><span><kbd>SPACE</kbd> DROP BOMB</span></div></section>
+      <aside class="panel info-panel"><div class="panel-heading"><span>LOADOUT</span><span class="live-label">LIVE</span></div><div class="loadout"><div><span class="stat-icon bomb">+</span><span>BOMB COUNT</span></div><strong id="bombs">1</strong></div><div class="loadout"><div><span class="stat-icon blast">✦</span><span>BLAST RADIUS</span></div><strong id="blast">2</strong></div><div class="loadout"><div><span class="stat-icon speed">»</span><span>MOVE SPEED</span></div><strong id="speed">1</strong></div><div class="panel-divider"></div><p class="eyebrow">HOW TO SURVIVE</p><ul class="rules"><li>Hard walls never break.</li><li>Blasts stop at blocks.</li><li>Pickups hide in rubble.</li></ul></aside>
+    </section>
+    <footer><span>FUSE / 001</span><span>SERVER-REFEREED COMBAT</span><span>2026</span></footer>
+  </main><script src="script.js"></script>
+</body>
+</html>
