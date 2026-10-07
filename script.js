@@ -34,6 +34,8 @@ function render() {
 function updateUI() { const players = state.players; $("playerCount").textContent = `${players.length}/4`; $("playerList").innerHTML = players.map(p => `<div class="player-row ${p.alive ? "" : "dead"}"><i class="player-color" style="background:${COLORS[p.color]}"></i><span class="name">${p.name}${p.id === myId ? " (YOU)" : ""}</span><span class="state">${p.alive ? "READY" : "OUT"}</span></div>`).join(""); const me = players.find(p => p.id === myId); if (me) { $("bombs").textContent = me.bombCount; $("blast").textContent = me.blastRadius; $("speed").textContent = me.speed; } $("matchState").textContent = state.status; $("timer").textContent = new Date(state.timeRemaining).toISOString().slice(14, 19); if (state.status === "PLAYING") $("overlay").classList.add("hidden"); }
 function ready() { $("readyButton").textContent = "READY ✓"; send("ready"); }
 function key(event) { const keys = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right", w: "up", s: "down", a: "left", d: "right" }; if (event.code === "Space") { event.preventDefault(); send("bomb"); return; } const direction = keys[event.key] || keys[event.key.toLowerCase()]; if (direction) { event.preventDefault(); send("move", { direction }); } }
+function touchAction(event) { event.preventDefault(); const action = event.currentTarget.dataset.action; if (action === "bomb") send("bomb"); else send("move", { direction: action }); }
 $("readyButton").onclick = ready;
 document.addEventListener("keydown", key);
+document.querySelectorAll("[data-action]").forEach(button => button.addEventListener("pointerdown", touchAction));
 connect();
