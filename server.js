@@ -22,6 +22,7 @@ const players = new Map();
 let grid;
 let bombs = [];
 let items = [];
+let explosions = [];
 let status = "WAITING FOR PLAYERS";
 let startedAt = 0;
 
@@ -49,6 +50,7 @@ function snapshot() {
     grid,
     players: [...players.values()].map(({ id, name, color, x, y, alive, bombCount, blastRadius, speed }) => ({ id, name, color, x, y, alive, bombCount, blastRadius, speed })),
     bombs: bombs.map(bomb => ({ x: bomb.x, y: bomb.y, remaining: Math.max(0, bomb.expires - Date.now()) })),
+    explosions: explosions.map(explosion => ({ cells: explosion.cells, remaining: Math.max(0, explosion.expires - Date.now()) })),
     items,
     status,
     timeRemaining: status === "PLAYING" ? Math.max(0, 180000 - (Date.now() - startedAt)) : 180000,
@@ -60,6 +62,7 @@ function startMatch() {
   createGrid();
   bombs = [];
   items = [];
+  explosions = [];
   [...players.values()].forEach((player, index) => Object.assign(player, { ...SPAWN[index], alive: true, bombCount: 1, activeBombs: 0, blastRadius: 2, speed: 1 }));
   status = "PLAYING";
   startedAt = Date.now();
@@ -103,7 +106,8 @@ function explode(bomb) {
     for (let distance = 1; distance <= bomb.radius; distance += 1) {
       const x = bomb.x + dx * distance;
       const y = bomb.y + dy * distance;
-      if (x < 0 || x >= SIZE || y < 0 || y >= SIZE || grid[y][x] === 2) break;
+      const border = x === 0 || y === 0 || x === SIZE - 1 || y === SIZE - 1;
+      if (x < 0 || x >= SIZE || y < 0 || y >= SIZE || grid[y][x] === 2 || (grid[y][x] === 1 && border)) break;
       cells.push({ x, y });
       if (grid[y][x] === 1) {
         grid[y][x] = 0;
@@ -112,6 +116,7 @@ function explode(bomb) {
       }
     }
   }
+  explosions.push({ cells, expires: Date.now() + 250 });
   cells.forEach(cell => {
     const victim = [...players.values()].find(player => player.alive && player.x === cell.x && player.y === cell.y);
     if (victim) { victim.alive = false; feed(`${victim.name} was blown up`); }
@@ -147,12 +152,13 @@ wss.on("connection", socket => {
 
 setInterval(() => {
   bombs.filter(bomb => bomb.expires <= Date.now()).forEach(explode);
+  explosions = explosions.filter(explosion => explosion.expires > Date.now());
   if (status === "PLAYING") {
     const alive = [...players.values()].filter(player => player.alive);
     if (alive.length <= 1 && players.size >= 2) status = alive.length ? `${alive[0].name} WINS` : "EVERYONE OUT";
     else if (Date.now() - startedAt >= 180000) status = "TIME UP";
   }
   broadcast(snapshot());
-}, 100);
+}, 33);
 
 server.listen(PORT, "0.0.0.0", () => console.log(`FUSE arena listening on http://localhost:${PORT}`));
